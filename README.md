@@ -44,7 +44,7 @@ pip install matplotlib seaborn scikit-learn
 ├── chebnet.py               # ChebNet model
 ├── gated_gcn.py             # GatedGCN model
 ├── semiemb.py               # SemiEmb model
-├── main.py                  # Main training/evaluation loop
+├── train.py                 # Main training/evaluation loop
 ├── plots/                   # Output folder for plots
 └── README.md                # This file
 ```
@@ -54,7 +54,7 @@ pip install matplotlib seaborn scikit-learn
 To train and evaluate a model, run:
 
 ```bash
-python main.py
+python train.py
 ```
 
 By default, it runs `GatedGCN` on the **Cora** dataset. You can change the model name in the script:
