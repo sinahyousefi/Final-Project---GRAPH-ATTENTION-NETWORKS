@@ -6,6 +6,8 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.metrics import f1_score, confusion_matrix
 from torch_geometric.datasets import Planetoid
+import time
+import platform
 
 # Models
 from gat import GAT
@@ -192,6 +194,14 @@ def main(dataset_name: str = 'Cora', model_name: str = 'ChebNet', seed: int = 42
     set_seed(seed)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
+    start_time = time.time()
+    print("System Information:")
+    print("Platform:", platform.platform())
+    print("PyTorch version:", torch.__version__)
+    print("CUDA available:", torch.cuda.is_available())
+    print("Device:", device)
+
+
     # Load dataset and config
     if dataset_name == 'Cora':
         config = get_cora_config(model_name)
@@ -274,6 +284,15 @@ def main(dataset_name: str = 'Cora', model_name: str = 'ChebNet', seed: int = 42
     plot_loss(epoch_metrics['Loss'], model_name, dataset_name)
     plot_confusion_matrix(best_stats['True'], best_stats['Pred'], model_name, dataset_name)
 
+    total_time = time.time() - start_time
+    avg_epoch_time = total_time / (best_epoch + 1)
+
+    print(f"\n--- Runtime Statistics ---")
+    print(f"Total runtime (s): {total_time:.2f}")
+    print(f"Average time per epoch (s): {avg_epoch_time:.4f}")
+    print(f"Total training epochs (actual): {best_epoch + 1}")
+    print(f"Estimated GPU hours used: {total_time / 3600:.4f} hours")
+
     # Final Summary
     print("\n--- Final Results ---")
     print(f"Model: {model_name} | Dataset: {dataset_name}")
@@ -285,5 +304,5 @@ def main(dataset_name: str = 'Cora', model_name: str = 'ChebNet', seed: int = 42
 
 if __name__ == '__main__':
     dataset_name = 'Cora'
-    model_name = 'SemiEmb'  # Change to 'GAT','GCN', 'GraphSAGE', 'GatedGCN', 'ChebNet', 'SemiEmb', 'GraphSAGE-Mean', 'GraphSAGE-Pooling'
+    model_name = 'GCN'  # Change to 'GAT','GCN', 'GraphSAGE', 'GatedGCN', 'ChebNet', 'SemiEmb', 'GraphSAGE-Mean', 'GraphSAGE-Pooling'
     main(dataset_name=dataset_name, model_name=model_name)
