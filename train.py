@@ -248,5 +248,5 @@ def main(dataset_name: str = 'Cora', model_name: str = 'ChebNet', seed: int = 42
 
 if __name__ == '__main__':
     dataset_name = 'Cora'
-    model_name = 'GCN'  # Change to 'GAT','GCN', 'GraphSAGE', 'GatedGCN', 'ChebNet', 'SemiEmb', 'GraphSAGE-Mean', 'GraphSAGE-Pooling'
+    model_name = 'GraphSAGE'  # Change to 'GAT','GCN', 'GraphSAGE', 'GatedGCN', 'ChebNet', 'SemiEmb', 'GraphSAGE-Mean', 'GraphSAGE-Pooling'
     main(dataset_name=dataset_name, model_name=model_name)
