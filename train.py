@@ -94,13 +94,50 @@ def get_cora_config(model_name='GAT'):
 
     if model_name == 'GAT':
         base['heads'] = [8, 1]
-        base['in_dim']=1433
-        base['out_dim']=7
+        base['in_dim'] = 1433
+        base['out_dim'] = 7
+
     elif model_name == 'GCN':
         base['hidden_channels'] = 16
-    elif model_name == 'LSTM':
-        base['dropout'] = 0.4
-        base['lr'] = 0.002
+        base['dropout'] = 0.5
+        base['lr'] = 0.01
+        base['conv1_weight_decay'] = 5e-4
+
+    elif model_name == 'ChebNet':
+        base['hidden_channels'] = 16
+        base['dropout'] = 0.5
+        base['lr'] = 0.01
+        base['conv1_weight_decay'] = 5e-4
+
+    elif model_name == 'GraphSAGE':
+        base['hidden_channels'] = 128
+        base['dropout'] = 0.5
+        base['lr'] = 0.01
+        base['conv1_weight_decay'] = 5e-4
+
+    elif model_name == 'GraphSAGE-Mean':
+        base['hidden_channels'] = 128
+        base['dropout'] = 0.5
+        base['lr'] = 0.01
+        base['conv1_weight_decay'] = 5e-4
+
+    elif model_name == 'GraphSAGE-Pooling':
+        base['hidden_channels'] = 128
+        base['dropout'] = 0.5
+        base['lr'] = 0.01
+        base['conv1_weight_decay'] = 5e-4
+
+    elif model_name == 'GatedGCN':
+        base['hidden_channels'] = 32
+        base['num_layers'] = 3
+        base['dropout'] = 0.5
+        base['lr'] = 0.01
+        base['conv1_weight_decay'] = 5e-4
+
+    elif model_name == 'SemiEmb':
+        base['lr'] = 0.01
+        base['conv1_weight_decay'] = 5e-4
+
     return base
 
 def plot_metrics(epoch_metrics: dict, model_name: str, dataset_name: str) -> None:
@@ -248,5 +285,5 @@ def main(dataset_name: str = 'Cora', model_name: str = 'ChebNet', seed: int = 42
 
 if __name__ == '__main__':
     dataset_name = 'Cora'
-    model_name = 'GatedGCN'  # Change to 'GAT','GCN', 'GraphSAGE', 'GatedGCN', 'ChebNet', 'SemiEmb', 'GraphSAGE-Mean', 'GraphSAGE-Pooling'
+    model_name = 'SemiEmb'  # Change to 'GAT','GCN', 'GraphSAGE', 'GatedGCN', 'ChebNet', 'SemiEmb', 'GraphSAGE-Mean', 'GraphSAGE-Pooling'
     main(dataset_name=dataset_name, model_name=model_name)

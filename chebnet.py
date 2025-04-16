@@ -4,7 +4,7 @@ from torch_geometric.nn import ChebConv
 
 
 class ChebNet(torch.nn.Module):
-    def __init__(self, in_channels, hidden_channels, out_channels, dropout=0.6, K=3):
+    def __init__(self, in_channels, hidden_channels, out_channels, dropout=0.5, K=3):
         super(ChebNet, self).__init__()
         self.dropout = dropout
         self.conv1 = ChebConv(in_channels, hidden_channels, K)
