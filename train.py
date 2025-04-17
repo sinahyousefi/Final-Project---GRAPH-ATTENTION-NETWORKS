@@ -9,6 +9,8 @@ from torch_geometric.datasets import Planetoid
 import time
 import platform
 import pandas as pd
+from sklearn.manifold import TSNE
+import networkx as nx
 
 # Models
 from gat import GAT
@@ -169,6 +171,52 @@ def get_cora_config(model_name='GAT'):
 
     return base
 
+def plot_tsne_with_attention(model, data, model_name, dataset_name):
+    model.eval()
+    with torch.no_grad():
+        x = data.x
+        edge_index = data.edge_index
+        out = model(x, edge_index)
+
+        # Get embeddings before final classification (e.g., output of first GAT layer)
+        if hasattr(model, 'conv1'):
+            embeddings = model.conv1(x, edge_index).cpu().numpy()
+        else:
+            embeddings = out.cpu().numpy()
+
+        labels = data.y.cpu().numpy()
+
+        # Perform t-SNE
+        tsne = TSNE(n_components=2, random_state=42)
+        tsne_result = tsne.fit_transform(embeddings)
+
+        # Plot embeddings
+        plt.figure(figsize=(10, 8))
+        scatter = plt.scatter(tsne_result[:, 0], tsne_result[:, 1], c=labels, cmap='tab10', s=20, alpha=0.8)
+        plt.colorbar(scatter, ticks=range(data.y.max().item() + 1), label='Class')
+        plt.title(f"{model_name} on {dataset_name}: t-SNE of Node Embeddings")
+
+        # Highlight top attention edges (optional)
+        if hasattr(model, 'alpha'):
+            alpha_weights = model.alpha
+            if isinstance(alpha_weights, torch.Tensor):
+                alpha_weights = alpha_weights.detach().cpu().numpy()
+            G = nx.Graph()
+            tsne_coords = {i: (tsne_result[i][0], tsne_result[i][1]) for i in range(data.num_nodes)}
+            G.add_nodes_from(tsne_coords)
+            for i in range(edge_index.size(1)):
+                src, tgt = edge_index[0, i].item(), edge_index[1, i].item()
+                if src < data.num_nodes and tgt < data.num_nodes:
+                    G.add_edge(src, tgt, weight=alpha_weights[i] if i < len(alpha_weights) else 0.1)
+            edges = sorted(G.edges(data=True), key=lambda x: x[2]['weight'], reverse=True)[:100]
+            nx.draw_networkx_edges(G, pos=tsne_coords, edgelist=[(u, v) for u, v, _ in edges], edge_color='black', alpha=0.4)
+
+        plt.tight_layout()
+        filename = f"plots/{model_name}_{dataset_name}_tsne_attention.png"
+        plt.savefig(filename)
+        print(f"Saved: {filename}")
+        plt.close()
+
 def plot_metrics(epoch_metrics: dict, model_name: str, dataset_name: str) -> None:
     """Plots training/validation/test accuracy and F1 scores over epochs."""
     plt.figure(figsize=(10, 6))
@@ -263,6 +311,9 @@ def main(dataset_name: str = 'Cora', model_name: str = 'ChebNet', seed: int = 42
     best_val_acc = 0
     best_model_state = None
     patience_counter = 0
+    
+    if model_name == 'GAT':
+        plot_tsne_with_attention(model, data, model_name, dataset_name)
 
     for epoch in range(config['epochs']):
         loss = train(model, data, optimizer)
@@ -334,7 +385,8 @@ def main(dataset_name: str = 'Cora', model_name: str = 'ChebNet', seed: int = 42
 if __name__ == '__main__':
     
     dataset_name = 'Cora'
-    model_name = 'GraphSAGE-Pooling'  # Change to 'GAT','GCN', 'GraphSAGE', 'GatedGCN', 'ChebNet', 'SemiEmb', 'GraphSAGE-Mean', 'GraphSAGE-Pooling'
+    model_name = 'GAT'  # Change to 'GAT','GCN', 'GraphSAGE', 'GatedGCN', 'ChebNet', 'SemiEmb', 'GraphSAGE-Mean', 'GraphSAGE-Pooling'
     
     
     main(dataset_name=dataset_name, model_name=model_name)
+
