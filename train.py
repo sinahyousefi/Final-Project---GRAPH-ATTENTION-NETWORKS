@@ -8,6 +8,7 @@ from sklearn.metrics import f1_score, confusion_matrix
 from torch_geometric.datasets import Planetoid
 import time
 import platform
+import pandas as pd
 
 # Models
 from gat import GAT
@@ -27,6 +28,32 @@ def set_seed(seed: int = 1) -> None:
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
 
+def run_eda_on_cora(dataset):
+    data = dataset[0]
+
+    print("\n=== Cora Dataset EDA ===")
+    print(f"Number of nodes: {data.num_nodes}")
+    print(f"Number of edges: {data.num_edges} (undirected)")
+    print(f"Number of features per node: {data.num_features}")
+    print(f"Number of classes: {dataset.num_classes}")
+    print(f"Average degree: {data.num_edges // data.num_nodes}")
+
+    y = data.y.cpu().numpy()
+    class_counts = pd.Series(y).value_counts().sort_index()
+    print("\nClass Distribution:")
+    for idx, count in class_counts.items():
+        print(f"  Class {idx}: {count} nodes")
+
+    class_counts.index = [f'Class {i}' for i in class_counts.index]
+    plt.figure(figsize=(8, 5))
+    sns.barplot(x=class_counts.index, y=class_counts.values, hue=class_counts.index, palette="viridis", legend=False)
+    plt.title("Cora Node Class Distribution")
+    plt.xlabel("Class Label")
+    plt.ylabel("Number of Nodes")
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.savefig("plots/cora_class_distribution.png")
+    print("Saved class distribution plot to: plots/cora_class_distribution.png\n")
 
 def train(model, data, optimizer) -> float:
     """Performs one training step."""
@@ -193,7 +220,7 @@ def plot_confusion_matrix(y_true, y_pred, model_name: str, dataset_name: str) ->
 def main(dataset_name: str = 'Cora', model_name: str = 'ChebNet', seed: int = 42):
     set_seed(seed)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
+    
     start_time = time.time()
     print("System Information:")
     print("Platform:", platform.platform())
@@ -210,6 +237,7 @@ def main(dataset_name: str = 'Cora', model_name: str = 'ChebNet', seed: int = 42
 
     dataset = Planetoid(root=config['root'], name=dataset_name)
     data = dataset[0].to(device)
+    
     data.x = data.x / (data.x.sum(1, keepdim=True) + 1e-6)
 
     # Setup model and optimizer
@@ -280,6 +308,7 @@ def main(dataset_name: str = 'Cora', model_name: str = 'ChebNet', seed: int = 42
     model.load_state_dict(best_model_state)
     selected_keys = ['Train Accuracy', 'Val Accuracy', 'Test Accuracy', 'Micro-F1', 'Macro-F1']
     filtered_metrics = {k: epoch_metrics[k] for k in selected_keys}
+    run_eda_on_cora(dataset)
     plot_metrics(filtered_metrics, model_name, dataset_name)
     plot_loss(epoch_metrics['Loss'], model_name, dataset_name)
     plot_confusion_matrix(best_stats['True'], best_stats['Pred'], model_name, dataset_name)
@@ -303,6 +332,9 @@ def main(dataset_name: str = 'Cora', model_name: str = 'ChebNet', seed: int = 42
     print(f"Macro-F1: {best_stats['Macro-F1']:.4f}")
 
 if __name__ == '__main__':
+    
     dataset_name = 'Cora'
     model_name = 'GCN'  # Change to 'GAT','GCN', 'GraphSAGE', 'GatedGCN', 'ChebNet', 'SemiEmb', 'GraphSAGE-Mean', 'GraphSAGE-Pooling'
+    
+    
     main(dataset_name=dataset_name, model_name=model_name)
