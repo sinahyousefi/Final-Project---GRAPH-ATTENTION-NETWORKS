@@ -331,7 +331,7 @@ def main(dataset_name: str = 'Cora', model_name: str = 'ChebNet', seed: int = 42
         epoch_metrics['Macro-F1'].append(macro_f1)
         
 
-        # Early stopping
+        # Early Stopping
         if val_acc > best_val_acc:
             best_val_acc = val_acc
             best_epoch = epoch
