@@ -3,7 +3,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch_geometric.nn import GatedGraphConv
 
-
 class GatedGCN(nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, num_layers=3, dropout=0.5):
         super(GatedGCN, self).__init__()

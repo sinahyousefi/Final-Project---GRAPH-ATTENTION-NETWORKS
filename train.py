@@ -23,7 +23,6 @@ from chebnet import ChebNet
 from gated_gcn import GatedGCN
 from semiemb import SemiEmb
 
-
 def set_seed(seed: int = 1) -> None:
     """Fix random seed for reproducibility."""
     random.seed(seed)

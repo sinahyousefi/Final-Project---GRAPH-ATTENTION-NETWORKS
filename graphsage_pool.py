@@ -6,7 +6,7 @@ class GraphSAGE_Pooling(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, dropout=0.5):
         super(GraphSAGE_Pooling, self).__init__()
         self.dropout = dropout
-        self.conv1 = SAGEConv(in_channels, hidden_channels, aggr='max')
+        self.conv1 = SAGEConv(in_channels, hidden_channels,aggr='max')
         self.conv2 = SAGEConv(hidden_channels, out_channels, aggr='max')
 
     def forward(self, x, edge_index):

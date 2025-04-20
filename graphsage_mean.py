@@ -6,7 +6,7 @@ class GraphSAGE_Mean(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, dropout=0.5):
         super(GraphSAGE_Mean, self).__init__()
         self.dropout = dropout
-        self.conv1 = SAGEConv(in_channels, hidden_channels, aggr='mean')
+        self.conv1 = SAGEConv(in_channels, hidden_channels,aggr='mean')
         self.conv2 = SAGEConv(hidden_channels, out_channels, aggr='mean')
 
     def forward(self, x, edge_index):

@@ -2,7 +2,6 @@ import torch
 import torch.nn.functional as F
 from torch_geometric.nn import SAGEConv
 
-
 class GraphSAGE(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, dropout):
         super(GraphSAGE, self).__init__()

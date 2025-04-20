@@ -35,7 +35,6 @@ pip install matplotlib seaborn scikit-learn
 ## 📁 File Structure
 
 ```
-.
 ├── gat.py                   # GAT model
 ├── gcn.py                   # GCN model
 ├── sage.py                  # GraphSAGE model (base)
