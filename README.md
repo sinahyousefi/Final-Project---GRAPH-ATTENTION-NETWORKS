@@ -1,4 +1,3 @@
-
 # 🔍 Final-Project---Graph Neural Network Benchmark on Cora Dataset
 
 This repository contains a benchmarking pipeline for evaluating various Graph Neural Network (GNN) architectures on the **Cora** dataset using PyTorch Geometric. Models include GCN, GAT, GraphSAGE (with different aggregation strategies), ChebNet, GatedGCN, and SemiEmb.

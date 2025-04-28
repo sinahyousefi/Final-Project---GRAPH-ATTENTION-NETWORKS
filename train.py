@@ -1,4 +1,3 @@
-
 import torch
 import torch.nn.functional as F
 import random
@@ -386,7 +385,6 @@ if __name__ == '__main__':
     
     dataset_name = 'Cora'
     model_name = 'GAT'  # Change to 'GAT','GCN', 'GraphSAGE', 'GatedGCN', 'ChebNet', 'SemiEmb', 'GraphSAGE-Mean', 'GraphSAGE-Pooling'
-    
-    
+        
     main(dataset_name=dataset_name, model_name=model_name)
 
