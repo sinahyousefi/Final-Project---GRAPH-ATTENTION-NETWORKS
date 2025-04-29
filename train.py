@@ -12,6 +12,7 @@ import pandas as pd
 from sklearn.manifold import TSNE
 import networkx as nx
 
+
 # Models
 from gat import GAT
 from gcn import GCN
@@ -21,6 +22,7 @@ from graphsage_pool import GraphSAGE_Pooling
 from chebnet import ChebNet
 from gated_gcn import GatedGCN
 from semiemb import SemiEmb
+
 
 def set_seed(seed: int = 1) -> None:
     """Fix random seed for reproducibility."""
